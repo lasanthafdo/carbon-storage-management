@@ -1,20 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>org.wso2.carbon</groupId>
+        <groupId>org.wso2.carbon.storagemgt</groupId>
         <artifactId>rss-manager</artifactId>
-        <version>4.3.0-SNAPSHOT</version>
+        <version>4.3.4-SNAPSHOT</version>
 	<relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.wso2.carbon</groupId>
+    <groupId>org.wso2.carbon.storagemgt</groupId>
     <artifactId>org.wso2.carbon.rssmanager.ui</artifactId>
     <packaging>bundle</packaging>
     <name>WSO2 Carbon - RSS Manager UI</name>
-    <version>4.3.0-SNAPSHOT</version>
+    <version>4.3.4-SNAPSHOT</version>
     <description>WSO2 Carbon - RSS Manager UI</description>
     <url>http://wso2.org</url>
 
@@ -28,21 +26,19 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
-                        <Bundle-Version>${project.version}</Bundle-Version>
+                        <Bundle-Version>${carbon.storage.management.version}</Bundle-Version>
                         <Export-Package>
                             org.wso2.carbon.rssmanager.ui.*,
-     
                             org.wso2.carbon.rssmanager.core.dto.*
                         </Export-Package>
                         <Import-Package>
                             javax.servlet.*;version="${imp.pkg.version.javax.servlet}",
                             javax.xml.namespace.*;version="0.0.0",
                             *;resolution:=optional,
-                            !org.wso2.carbon.rssmanager.ui.i18n,
                             org.wso2.carbon.rssmanager.ui.*,
-                            org.wso2.carbon.dbconsole.ui.*,
-                            org.wso2.carbon.rssmanager.ui.stub.*,
-                            org.wso2.carbon.rssmanager.core.dto.*
+                            org.wso2.carbon.rssmanager.core.dto.*;
+                            version="0.0.0",
+                            org.wso2.carbon.rssmanager.stub.*
                         </Import-Package>
                         <Carbon-Component>UIBundle</Carbon-Component>
                     </instructions>
@@ -54,27 +50,20 @@
     <dependencies>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.ui</artifactId>
-            <version>${carbon.platform.version}</version>
+            <artifactId>org.wso2.carbon.logging</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.axis2.wso2</groupId>
             <artifactId>axis2</artifactId>
-            <version>${orbit.version.axis2}</version>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.storagemgt</groupId>
             <artifactId>org.wso2.carbon.rssmanager.stub</artifactId>
-            <version>4.3.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.rssmanager.common</artifactId>
-            <version>${carbon.platform.version}</version>
-        </dependency>
+        </dependency> 
+	<dependency>
+	    <groupId>org.wso2.carbon.storagemgt</groupId>
+	    <artifactId>org.wso2.carbon.rssmanager.core</artifactId>
+	</dependency>
     </dependencies>
-
-    <properties>
-       </properties>
 
 </project>

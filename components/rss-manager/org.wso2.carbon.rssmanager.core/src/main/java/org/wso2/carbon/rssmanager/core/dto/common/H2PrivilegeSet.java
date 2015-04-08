@@ -19,6 +19,20 @@
 
 package org.wso2.carbon.rssmanager.core.dto.common;
 
+/**
+ * H2 database privilege set
+ */
 public class H2PrivilegeSet extends DatabasePrivilegeSet {
+
+	private String tableName;
+
+	public String getTableName() {
+		return tableName;
+	}
+
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
+
 
 }

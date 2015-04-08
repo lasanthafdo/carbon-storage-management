@@ -44,6 +44,8 @@
     String keyspace = request.getParameter("keyspaceName");
     String columnFamily = request.getParameter("cfName");
     String setPermissions = request.getParameter("setPermissions");
+    String envName = (String) session.getAttribute("envName");
+    String clusterName = (String) session.getAttribute("clusterName");
     ColumnFamilyInformation cfInformation = null;
     ColumnFamilyStats columnFamilyStats = null;
     String[] userRoles = new String[0];
@@ -69,7 +71,8 @@
             CassandraKeyspaceAdminClient cassandraKeyspaceAdminClient =
                 new CassandraKeyspaceAdminClient(config.getServletContext(), session);
             userRoles = cassandraKeyspaceAdminClient.getAllRoles();
-            String resourcePath = CassandraAdminClientConstants.CASSANDRA_RESOURCE_ROOT + "/" + keyspace + "/" + columnFamily;
+            String resourcePath = CassandraAdminClientConstants.CASSANDRA_RESOURCE_ROOT + "/" + envName + "/"
+                                        + clusterName + "/" + keyspace + "/" + columnFamily;
             rolePermissions = cassandraKeyspaceAdminClient.getResourcePermissionsOfRoles(resourcePath);
             if(rolePermissions == null){
                 if(setPermissions != null){
@@ -123,7 +126,7 @@
                 CassandraAdminClientHelper.getAliasForValidatorTypeClass(cfInformation.getKeyValidationClass());
     %>
     <div id="middle">
-        <h2><fmt:message key="cassandra.cf.dashboard"/> ( <%=keyspace%>
+        <h2><fmt:message key="cassandra.cf.dashboard"/> ( <%=envName%> > <%=clusterName%> > <%=keyspace%>
                                                     > <%=columnFamily%>) </h2>
         <div id="workArea">
             <table width="100%" cellspacing="0" cellpadding="0" border="0">
@@ -553,8 +556,8 @@
                                <input type="hidden" name="cfName" id="cfName" value="<%=columnFamily%>"/>
                                <input class="button" type="submit" value="Save">
                                <input id="cancelKSButton" class="button" name="cancelKSButton" type="button" href="#"
-                                  onclick="location.href = 'cf_dashboard.jsp?keyspaceName=<%=keyspace%>&cfName=<%=columnFamily%>#permissionArea';"
-                                  value="<fmt:message key="cassandra.actions.cancel"/>"/>
+                                  onclick="resetPermissions()"
+                                  value="<fmt:message key="cassandra.actions.reset"/>"/>
                             </td>
                         </tr>
                     </tbody>

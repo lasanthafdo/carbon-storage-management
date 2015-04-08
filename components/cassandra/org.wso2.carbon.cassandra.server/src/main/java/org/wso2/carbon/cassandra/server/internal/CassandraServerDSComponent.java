@@ -24,13 +24,12 @@ import org.osgi.service.component.ComponentContext;
 import org.wso2.carbon.base.api.ServerConfigurationService;
 import org.wso2.carbon.cassandra.server.CassandraServerConstants;
 import org.wso2.carbon.cassandra.server.CassandraServerController;
-import org.wso2.carbon.cassandra.server.TenantCreationListener;
 import org.wso2.carbon.cassandra.server.service.CassandraServerService;
 import org.wso2.carbon.cassandra.server.service.CassandraServerServiceImpl;
 import org.wso2.carbon.cassandra.server.util.CassandraServerUtil;
 import org.wso2.carbon.identity.authentication.AuthenticationService;
-import org.wso2.carbon.stratos.common.listeners.TenantMgtListener;
 import org.wso2.carbon.user.core.service.RealmService;
+import org.wso2.carbon.utils.Axis2ConfigurationContextObserver;
 import org.wso2.carbon.utils.CarbonUtils;
 
 import java.io.File;
@@ -65,6 +64,7 @@ public class CassandraServerDSComponent {
     private static final String DEFAULT_CASSANDRA_RPC_PORT = "cassandra.rpc.port";
     private static final String DEFAULT_CASSANDRA_STORAGE_PORT = "cassandra.storage.port";
     private static final String DEFAULT_CASSANDRA_SSL_STORAGE_PORT = "cassandra.ssl.storage.port";
+    private static final String DEFAULT_CASSANDRA_NATIVE_TRANSPORT_PORT = "cassandra.native.transport.port";
     private static final String DEFAULT_CASSANDRA_YAML_PATH = "cassandra.config";
     private static final String DEFAULT_CASSANDRA_CONFIG_DIR_PATH = "cassandra.config.dir";
 
@@ -104,14 +104,24 @@ public class CassandraServerDSComponent {
                             carbonPortOffset, DEFAULT_CASSANDRA_SSL_STORAGE_PORT);
             System.setProperty("cassandra.ssl_storage_port", Integer.toString(cassandraSSLStoragePort));
 
+            int cassandraNativeTransportPort =
+                    CassandraServerUtil.readPortFromSystemVar(
+                            CassandraServerConstants.ServerConfiguration.CASSANDRA_NATIVE_TRANSPORT_PORT,
+                            carbonPortOffset, DEFAULT_CASSANDRA_NATIVE_TRANSPORT_PORT
+                    );
+            System.setProperty("cassandra.native_transport_port", Integer.toString(cassandraNativeTransportPort));
+
             cassandraServerController = new CassandraServerController();
             //register OSGI service
             CassandraServerService cassandraServerService =
                     new CassandraServerServiceImpl(cassandraServerController);
+
+            /* Loading tenant specific data */
+            componentContext.getBundleContext().registerService(Axis2ConfigurationContextObserver.class.getName(),
+                    new CassandraServerAxis2ConfigContextObserver(), null);
+
             componentContext.getBundleContext().registerService(
                     CassandraServerService.class.getName(), cassandraServerService, null);
-            componentContext.getBundleContext().registerService(TenantMgtListener.class.getName(),
-                    new TenantCreationListener(), null);
             //Disable Cassandra server
             String disableServerStartup = System.getProperty(DISABLE_CASSANDRA_SERVER_STARTUP);
             if ("true".equals(disableServerStartup)) {

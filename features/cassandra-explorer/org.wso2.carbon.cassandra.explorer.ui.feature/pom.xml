@@ -1,46 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
+        <groupId>org.wso2.carbon.storagemgt</groupId>
         <artifactId>cassandra-explorer-feature</artifactId>
-        <groupId>org.wso2.carbon</groupId>
-        <version>4.3.0-SNAPSHOT</version>
-	<relativePath>../pom.xml</relativePath>
+        <version>4.3.4-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.cassandra.explorer.ui.feature</artifactId>
     <packaging>pom</packaging>
-    <version>4.3.0-SNAPSHOT</version>
+    <version>4.3.4-SNAPSHOT</version>
     <name>WSO2 Carbon - Cassandra Explorer UI Feature</name>
     <url>http://wso2.org</url>
     <description>This feature contains the bundles required for Cassandra Explorer UI</description>
 
     <dependencies>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.storagemgt</groupId>
             <artifactId>org.wso2.carbon.cassandra.explorer.ui</artifactId>
-            <version>4.3.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.storagemgt</groupId>
+            <artifactId>org.wso2.carbon.cassandra.explorer.stub</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.cassandra.explorer.stub</artifactId>
-            <version>4.3.0-SNAPSHOT</version>
-        </dependency>
-	<dependency>
-            <groupId>org.wso2.carbon</groupId>
-	    <artifactId>org.wso2.carbon.ui.menu.tools</artifactId>
-	    <version>${wso2carbon.version}</version>
+            <artifactId>org.wso2.carbon.ui.menu.tools</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.cassandra.wso2</groupId>
             <artifactId>apache-cassandra</artifactId>
-            <version>1.2.10.wso2v1</version>
         </dependency>
         <dependency>
             <groupId>org.hectorclient.wso2</groupId>
             <artifactId>hector-core</artifactId>
-            <version>1.1.4.wso2v1</version>
         </dependency>
     </dependencies>
 
@@ -59,7 +52,7 @@
                         </goals>
                         <configuration>
                             <id>org.wso2.carbon.cassandra.explorer.ui</id>
-                            <propertiesFile>../../../etc/feature.properties</propertiesFile>
+                            <propertiesFile>../../etc/feature.properties</propertiesFile>
                             <adviceFile>
                                 <properties>
                                     <propertyDef>org.wso2.carbon.p2.category.type:console
@@ -69,16 +62,15 @@
                                 </properties>
                             </adviceFile>
                             <bundles>
-                                <bundleDef>org.wso2.carbon:org.wso2.carbon.cassandra.explorer.ui:4.3.0-SNAPSHOT
-                                </bundleDef>
-                                <bundleDef>org.wso2.carbon:org.wso2.carbon.cassandra.explorer.stub:4.3.0-SNAPSHOT
-                                </bundleDef>
+                                <bundleDef>org.wso2.carbon.storagemgt:org.wso2.carbon.cassandra.explorer.ui:${carbon.storage.management.version}</bundleDef>
+                                <bundleDef>org.wso2.carbon.storagemgt:org.wso2.carbon.cassandra.explorer.stub:${carbon.storage.management.version}</bundleDef>
                             </bundles>
-			    <importBundles>
-                                  <importBundleDef>org.wso2.carbon:org.wso2.carbon.ui.menu.tools:${wso2carbon.version}</importBundleDef>
+                            <importBundles>
+                                <importBundleDef>org.wso2.carbon:org.wso2.carbon.ui.menu.tools:${carbon.kernel.version}
+                                </importBundleDef>
                             </importBundles>
                             <importFeatures>
-                                   <importFeatureDef>org.wso2.carbon.core.ui:${wso2carbon.version}</importFeatureDef>
+                                <importFeatureDef>org.wso2.carbon.core.ui:${carbon.kernel.version}</importFeatureDef>
                             </importFeatures>
                         </configuration>
                     </execution>
@@ -86,6 +78,4 @@
             </plugin>
         </plugins>
     </build>
-    <properties>
-    </properties>
 </project>

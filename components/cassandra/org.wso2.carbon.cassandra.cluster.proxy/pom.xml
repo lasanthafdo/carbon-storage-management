@@ -14,20 +14,18 @@
  ~ See the License for the specific language governing permissions and
  ~ limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>org.wso2.carbon</groupId>
+        <groupId>org.wso2.carbon.storagemgt</groupId>
         <artifactId>cassandra</artifactId>
-        <version>4.3.0-SNAPSHOT</version>
+        <version>4.3.4-SNAPSHOT</version>
 	<relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.wso2.carbon</groupId>
     <artifactId>org.wso2.carbon.cassandra.cluster.proxy</artifactId>
-    <version>4.3.0-SNAPSHOT</version>
+    <version>4.3.4-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>WSO2 Carbon - Cassandra Cluster Tools Cluster Handler</name>
     <url>http://wso2.org</url>
@@ -41,7 +39,6 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
@@ -62,13 +59,22 @@
                     </instructions>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <forkMode>pertest</forkMode>
+                    <argLine>-enableassertions</argLine>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
     <dependencies>
         <dependency>
             <groupId>org.apache.cassandra.wso2</groupId>
             <artifactId>apache-cassandra</artifactId>
-            <version>1.2.10.wso2v1</version>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
@@ -83,9 +89,8 @@
             <artifactId>org.wso2.carbon.logging</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.storagemgt</groupId>
             <artifactId>org.wso2.carbon.cassandra.cluster.mgt.stub</artifactId>
-            <version>4.3.0-SNAPSHOT</version>
         </dependency>
     </dependencies>
 </project>

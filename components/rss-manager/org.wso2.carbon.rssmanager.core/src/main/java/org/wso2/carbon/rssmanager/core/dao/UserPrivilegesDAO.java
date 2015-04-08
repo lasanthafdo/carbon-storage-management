@@ -20,43 +20,22 @@
 package org.wso2.carbon.rssmanager.core.dao;
 
 import org.wso2.carbon.rssmanager.core.dao.exception.RSSDAOException;
-import org.wso2.carbon.rssmanager.core.dto.common.DatabasePrivilegeSet;
-import org.wso2.carbon.rssmanager.core.dto.common.DatabasePrivilegeTemplate;
-import org.wso2.carbon.rssmanager.core.dto.common.UserDatabaseEntry;
+import org.wso2.carbon.rssmanager.core.dao.exception.RSSDatabaseConnectionException;
 import org.wso2.carbon.rssmanager.core.dto.common.UserDatabasePrivilege;
-import org.wso2.carbon.rssmanager.core.dto.restricted.DatabaseUser;
-import org.wso2.carbon.rssmanager.core.dto.restricted.RSSInstance;
-import org.wso2.carbon.rssmanager.core.jpa.persistence.dao.EntityBaseDAO;
 
-public interface UserPrivilegesDAO extends EntityBaseDAO<Integer, UserDatabasePrivilege>{
+import java.sql.Connection;
 
-    public void updateUserPrivileges(String environmentName, DatabasePrivilegeSet privileges,
-                                   RSSInstance rssInstance, DatabaseUser user,
-                                   String databaseName) throws RSSDAOException;
-    
-    public void updateUserPrivileges(UserDatabasePrivilege privileges) throws RSSDAOException;
+public interface UserPrivilegesDAO {
 
-    public void removeDatabasePrivileges(String environmentName, int rssInsanceId,
-                                         String username, int tenantId) throws RSSDAOException;
-    
-    void removeDatabasePrivileges(String environmentName, String username,
-                                  int tenantId) throws RSSDAOException;
-
-   /* public DatabasePrivilegeSet getUserDatabasePrivileges(String environmentName,
-                                                          int rssInstanceId,
-                                                          String databaseName, String username,
-                                                          int tenantId) throws RSSDAOException;*/
-    
-    public UserDatabasePrivilege getUserDatabasePrivileges(String environmentName, String rssInstanceName,
-                                                           String databaseName, String username,
-                                                           int tenantId) throws RSSDAOException;    
-    void addUserDatabasePrivileges(UserDatabasePrivilege entity) throws RSSDAOException;
-
-    /*@Deprecated
-    public void addUserDatabasePrivileges(String environmentName, int id,
-                                          DatabasePrivilegeSet privileges,
-                                          int tenantId) throws RSSDAOException;*/
-
-    public void removeUserDatabasePrivilegeEntriesByDatabase(RSSInstance rssInstance, String dbName,
-                                                             int tenantId) throws RSSDAOException;
+	/**
+	 * Method to update database user privilege configuration information from RSS metadata repository. This method takes an argument of native
+	 * update database user privileges prepared statement which needs to be executed along with the meta repository database entry removal as native
+	 * sql operations not transactional
+	 *
+	 * @param conn mata repository database connection
+	 * @param privileges update privileges
+	 * @throws RSSDAOException if something went wrong when updating user privileges
+	 */
+	public void updateUserPrivileges(Connection conn, UserDatabasePrivilege privileges)
+			throws RSSDAOException, RSSDatabaseConnectionException;;
 }

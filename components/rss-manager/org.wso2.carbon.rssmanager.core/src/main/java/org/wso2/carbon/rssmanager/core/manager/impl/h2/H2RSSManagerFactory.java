@@ -17,9 +17,9 @@
  *
  */
 
+
 package org.wso2.carbon.rssmanager.core.manager.impl.h2;
 
-import org.wso2.carbon.rssmanager.core.config.RSSManagementRepository;
 import org.wso2.carbon.rssmanager.core.environment.Environment;
 import org.wso2.carbon.rssmanager.core.manager.AbstractRSSManagerFactory;
 import org.wso2.carbon.rssmanager.core.manager.SystemRSSManager;
@@ -27,16 +27,16 @@ import org.wso2.carbon.rssmanager.core.manager.UserDefinedRSSManager;
 
 public class H2RSSManagerFactory extends AbstractRSSManagerFactory {
 
-    public H2RSSManagerFactory(Environment environment, RSSManagementRepository config) {
-        super(environment, config);
-    }
+	public H2RSSManagerFactory(Environment environment) {
+		super(environment);
+	}
 
-    public SystemRSSManager getSystemRSSManager() {
-        return new H2SystemRSSManager(getEnvironment(), getConfig());
-    }
+	public SystemRSSManager getSystemRSSManager() {
+		return new H2SystemRSSManager(getEnvironment());
+	}
 
-    public UserDefinedRSSManager getUserDefinedRSSManager() {
-        return null;
-    }
-    
+	public UserDefinedRSSManager getUserDefinedRSSManager() {
+		return new H2UserDefinedRSSManager(getEnvironment());
+	}
+
 }

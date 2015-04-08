@@ -25,8 +25,9 @@
 <%@ page import="org.wso2.carbon.utils.ServerConstants" %>
 <%@ page import="java.io.PrintWriter" %>
 <%@ page import="org.wso2.carbon.rssmanager.common.RSSManagerHelper" %>
-<%@ page import="org.wso2.carbon.utils.multitenancy.MultitenantConstants" %>
 <%@ page import="org.wso2.carbon.rssmanager.common.RSSManagerConstants" %>
+<%@ page import="org.wso2.carbon.rssmanager.core.dto.xsd.SSHInformationConfigInfo" %>
+<%@ page import="org.wso2.carbon.rssmanager.core.dto.xsd.SnapshotConfigInfo" %>
 
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>
@@ -40,10 +41,16 @@
     String password = request.getParameter("password");
     password = (password != null) ? password : "";
     String flag = request.getParameter("flag");
-    String serverCategory = request.getParameter("serverCategory");
+    String serverEnvironment=request.getParameter("serverEnvironment");
+    String databaseDriverClass=request.getParameter("databaseDriverClass");
+    String instanceType=request.getParameter("instancetype");
+    String sshHost = request.getParameter("sshHost");
+    String sshPort = request.getParameter("sshPort");
+    String sshUsername = request.getParameter("sshUsername");
+    String snapshotTargetDirectory = request.getParameter("snapshotTargetDirectory");
+
     String dbmsType;
     RSSManagerClient client;
-    String tenantDomain = (String) session.getAttribute(MultitenantConstants.TENANT_DOMAIN);
 
     String backendServerUrl = CarbonUIUtil.getServerURL(
             getServletConfig().getServletContext(), session);
@@ -56,27 +63,29 @@
         try {
             serverUrl = (serverUrl != null) ? RSSManagerHelper.constructConnectionUrl(serverUrl) : "";
             RSSInstanceInfo rssIns = new RSSInstanceInfo();
-            rssIns.setName(rssInstanceName);
+            SSHInformationConfigInfo sshConfig = new SSHInformationConfigInfo();
+            SnapshotConfigInfo snapshotConfig = new SnapshotConfigInfo();
+            rssIns.setRssInstanceName(rssInstanceName);
             rssIns.setServerURL(serverUrl);
             rssIns.setUsername(username);
             rssIns.setPassword(password);
             dbmsType = RSSManagerHelper.getDatabasePrefix(serverUrl);
             rssIns.setDbmsType(dbmsType.toUpperCase());
-            if (tenantDomain == null) {
-                if (RSSManagerConstants.WSO2_LOCAL_RDS_INSTANCE_TYPE.equals(
-                        serverCategory.toUpperCase())) {
-                    rssIns.setInstanceType(RSSManagerConstants.WSO2_LOCAL_RDS_INSTANCE_TYPE);
-                } else {
-                    rssIns.setInstanceType(RSSManagerConstants.RSSManagerTypes.RM_TYPE_SYSTEM);
-                }
+            rssIns.setEnvironmentName(serverEnvironment);
+            rssIns.setDriverClass(databaseDriverClass);
+            if(instanceType!=null && !instanceType.isEmpty()) {
+                rssIns.setInstanceType(instanceType);
             } else {
                 rssIns.setInstanceType(RSSManagerConstants.RSSManagerTypes.RM_TYPE_USER_DEFINED);
             }
-            rssIns.setServerCategory(serverCategory.toUpperCase());
-
-           
-            //TODO properly set RSS environment name
-            String envName = request.getParameter("envName");
+            rssIns.setServerCategory(RSSManagerConstants.LOCAL);
+            sshConfig.setHost(sshHost);
+            sshConfig.setPort(Integer.parseInt(sshPort));
+            sshConfig.setUsername(sshUsername);
+            snapshotConfig.setTargetDirectory(snapshotTargetDirectory);
+            rssIns.setSshInformationConfig(sshConfig);
+            rssIns.setSnapshotConfig(snapshotConfig);
+            client.createRSSInstance(rssIns.getEnvironmentName(), rssIns);
             response.setContentType("text/xml; charset=UTF-8");
             // Set standard HTTP/1.1 no-cache headers.
             response.setHeader("Cache-Control",
@@ -87,7 +96,7 @@
             response.setHeader("Pragma", "no-cache");
 
             PrintWriter pw = response.getWriter();
-            String msg = "Database server '" + rssIns.getName() + "' has been successfully created";
+            String msg = "Database server '" + rssIns.getRssInstanceName() + "' has been successfully created";
             pw.write(msg);
             pw.flush();
         } catch (Exception e) {
@@ -100,7 +109,8 @@
             
             //TODO properly set RSS environment name
             String envName = request.getParameter("envName");
-            client.dropRSSInstance(envName,rssInstanceName,RSSManagerConstants.RSSManagerTypes.RM_TYPE_SYSTEM);
+            instanceType = request.getParameter("instanceType");
+            client.dropRSSInstance(envName,rssInstanceName,instanceType);
             response.setContentType("text/xml; charset=UTF-8");
             // Set standard HTTP/1.1 no-cache headers.
             response.setHeader("Cache-Control",
@@ -123,28 +133,29 @@
         try {
             serverUrl = (serverUrl != null) ? RSSManagerHelper.constructConnectionUrl(serverUrl) : "";
             RSSInstanceInfo rssIns = new RSSInstanceInfo();
-            rssIns.setName(rssInstanceName);
+            SSHInformationConfigInfo sshConfig = new SSHInformationConfigInfo();
+            SnapshotConfigInfo snapshotConfig = new SnapshotConfigInfo();
+            rssIns.setRssInstanceName(rssInstanceName);
             rssIns.setServerURL(serverUrl);
             rssIns.setUsername(username);
             rssIns.setPassword(password);
+            rssIns.setEnvironmentName(serverEnvironment);
             dbmsType = RSSManagerHelper.getDatabasePrefix(serverUrl);
             rssIns.setDbmsType(dbmsType.toUpperCase());
-            rssIns.setServerCategory(serverCategory.toUpperCase());
-            if (tenantDomain == null) {
-                if (RSSManagerConstants.WSO2_LOCAL_RDS_INSTANCE_TYPE.equals(
-                        serverCategory.toUpperCase())) {
-                    rssIns.setInstanceType(RSSManagerConstants.WSO2_LOCAL_RDS_INSTANCE_TYPE);
-                } else {
-                    rssIns.setInstanceType(RSSManagerConstants.RSSManagerTypes.RM_TYPE_SYSTEM);
-                }
+            rssIns.setServerCategory(RSSManagerConstants.LOCAL);
+            if(instanceType!=null) {
+                rssIns.setInstanceType(instanceType);
             } else {
                 rssIns.setInstanceType(RSSManagerConstants.RSSManagerTypes.RM_TYPE_USER_DEFINED);
             }
 
-           
-            //TODO properly set RSS environment name
-            String envName = request.getParameter("envName");
-            client.editRSSInstance(envName, rssIns);
+            sshConfig.setHost(sshHost);
+            sshConfig.setPort(Integer.parseInt(sshPort));
+            sshConfig.setUsername(sshUsername);
+            snapshotConfig.setTargetDirectory(snapshotTargetDirectory);
+            rssIns.setSshInformationConfig(sshConfig);
+            rssIns.setSnapshotConfig(snapshotConfig);
+            client.editRSSInstance(rssIns.getEnvironmentName(), rssIns);
             response.setContentType("text/xml; charset=UTF-8");
             // Set standard HTTP/1.1 no-cache headers.
             response.setHeader("Cache-Control",
@@ -155,7 +166,7 @@
             response.setHeader("Pragma", "no-cache");
 
             PrintWriter pw = response.getWriter();
-            String msg = "Configuration of the database server '" + rssIns.getName() +
+            String msg = "Configuration of the database server '" + rssIns.getRssInstanceName() +
                     "' has been successfully edited";
             pw.write(msg);
             pw.flush();

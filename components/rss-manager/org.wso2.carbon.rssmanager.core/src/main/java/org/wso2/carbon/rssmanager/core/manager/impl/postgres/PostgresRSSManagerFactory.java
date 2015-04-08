@@ -17,9 +17,9 @@
  *
  */
 
+
 package org.wso2.carbon.rssmanager.core.manager.impl.postgres;
 
-import org.wso2.carbon.rssmanager.core.config.RSSManagementRepository;
 import org.wso2.carbon.rssmanager.core.environment.Environment;
 import org.wso2.carbon.rssmanager.core.manager.AbstractRSSManagerFactory;
 import org.wso2.carbon.rssmanager.core.manager.SystemRSSManager;
@@ -27,16 +27,16 @@ import org.wso2.carbon.rssmanager.core.manager.UserDefinedRSSManager;
 
 public class PostgresRSSManagerFactory extends AbstractRSSManagerFactory {
 
-    public PostgresRSSManagerFactory(Environment environment, RSSManagementRepository config) {
-        super(environment, config);
-    }
+	public PostgresRSSManagerFactory(Environment environment) {
+		super(environment);
+	}
 
-    public SystemRSSManager getSystemRSSManager() {
-        return new PostgresSystemRSSManager(getEnvironment(), getConfig());
-    }
+	public SystemRSSManager getSystemRSSManager() {
+		return new PostgresSystemRSSManager(getEnvironment());
+	}
 
-    public UserDefinedRSSManager getUserDefinedRSSManager() {
-        return new PostgresUserDefinedRSSManager(getEnvironment(), getConfig());
-    }
-    
+	public UserDefinedRSSManager getUserDefinedRSSManager() {
+		return new PostgresUserDefinedRSSManager(getEnvironment());
+	}
+
 }

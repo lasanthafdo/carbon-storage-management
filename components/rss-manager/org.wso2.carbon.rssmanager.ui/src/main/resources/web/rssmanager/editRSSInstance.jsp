@@ -25,6 +25,9 @@
 <%@ page import="org.wso2.carbon.utils.ServerConstants" %>
 <%@ page import="org.wso2.carbon.rssmanager.core.dto.xsd.RSSInstanceInfo" %>
 <%@ page import="org.wso2.carbon.rssmanager.common.RSSManagerConstants" %>
+<%@ page import="org.wso2.carbon.utils.multitenancy.MultitenantConstants" %>
+<%@ page import="org.wso2.carbon.rssmanager.core.dto.xsd.SSHInformationConfigInfo" %>
+<%@ page import="org.wso2.carbon.rssmanager.core.dto.xsd.SnapshotConfigInfo" %>
 
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib uri="http://wso2.org/projects/carbon/taglibs/carbontags.jar" prefix="carbon" %>
@@ -39,9 +42,14 @@
             resourceBundle="org.wso2.carbon.rssmanager.ui.i18n.Resources"
             topPage="false"
             request="<%=request%>"/>
+	<carbon:jsi18n
+			resourceBundle="org.wso2.carbon.rssmanager.ui.i18n.JSResources"
+			request="<%=request%>" i18nObjectName="rssmanagerjsi18n"/>
     <%
         String instanceType;
         String rssInstanceName = request.getParameter("rssInstanceName");
+        String rssEnvironment = request.getParameter("rssEnvironment");
+        String rssType = request.getParameter("rssType");
 
         String backendServerUrl = CarbonUIUtil.getServerURL(
                 getServletConfig().getServletContext(), session);
@@ -51,16 +59,20 @@
         RSSManagerClient client = new RSSManagerClient(cookie, backendServerUrl, configContext,
                 request.getLocale());
         RSSInstanceInfo rssIns = null;
+        SSHInformationConfigInfo sshConfig = null;
+        SnapshotConfigInfo snapshotConfig = null;
+        String tenantDomain = (String) session.getAttribute(MultitenantConstants.TENANT_DOMAIN);
+        String[] environments=null;
         try {
-
-            //TODO set proper environment name
-			String envName = request.getParameter("envName");
-            rssIns = client.getRSSInstance(envName,rssInstanceName,RSSManagerConstants.RSSManagerTypes.RM_TYPE_SYSTEM);
+            rssIns = client.getRSSInstance(rssEnvironment,rssInstanceName,rssType);
+            environments=client.getRSSEnvironmentNames();
         } catch (Exception e) {
             CarbonUIMessage.sendCarbonUIMessage(e.getMessage(), CarbonUIMessage.ERROR, request, e);
         }
 
         if (rssIns != null) {
+            sshConfig = rssIns.getSshInformationConfig();
+            snapshotConfig = rssIns.getSnapshotConfig();
     %>
 
     <div id="middle">
@@ -78,10 +90,58 @@
                                     <td class="leftCol-med"><fmt:message
                                             key="rss.manager.instance.name"/><font
                                             color='red'>*</font></td>
-                                    <td><input value="<%=rssIns.getName()%>" id="rssInstanceName"
+                                    <td><input value="<%=rssIns.getRssInstanceName()%>" id="rssInstanceName"
                                                name="rssInstanceName"
                                                size="30" type="text" readonly="readonly"></td>
                                 </tr>
+                                <tr>
+                                    <td class="leftCol-med"><fmt:message
+                                            key="rss.environment.name"/><font
+                                            color='red'>*</font></td>
+                                    <td><label>
+                                        <select name="serverEnvironment" id="serverEnvironment" disabled>
+                                            <option value="">----SELECT----
+                                            </option>
+                                            <%for(String environment:environments) {
+                                            if(environment.equalsIgnoreCase(rssIns.getEnvironmentName())) {
+                                            %>
+                                            <option value="<%=environment%>" selected="selected">
+                                                <%=environment%>
+                                            </option>
+                                            <%} else {%>
+                                            <option value="<%=environment%>">
+                                                <%=environment%>
+                                            </option>
+                                            <%}}%>
+                                        </select>
+                                    </label></td>
+                                </tr>
+                                <%
+                                    if(MultitenantConstants.SUPER_TENANT_DOMAIN_NAME.equalsIgnoreCase(tenantDomain)) {
+                                %>
+                                <tr>
+                                    <td class="leftCol-med"><fmt:message
+                                            key="rss.manager.rss.instance.type"/>
+                                        <font color="red">*</font>
+                                    </td>
+                                    <td>
+                                        <label>
+                                            <select name="instancetype" id="instancetype" disabled>
+                                                <option value="<%=RSSManagerConstants.RSSManagerTypes.RM_TYPE_SYSTEM%>"
+                                                        <%if(RSSManagerConstants.RSSManagerTypes.RM_TYPE_SYSTEM.equalsIgnoreCase(rssIns.getInstanceType())) {%>
+                                                        selected
+                                                        <%}%>><%=RSSManagerConstants.RSSManagerTypes.RM_TYPE_SYSTEM%>
+                                                </option>
+                                                <option value="<%=RSSManagerConstants.RSSManagerTypes.RM_TYPE_USER_DEFINED%>"
+                                                        <%if(RSSManagerConstants.RSSManagerTypes.RM_TYPE_USER_DEFINED.equalsIgnoreCase(rssIns.getInstanceType())) {%>
+                                                        selected
+                                                        <%}%>><%=RSSManagerConstants.RSSManagerTypes.RM_TYPE_USER_DEFINED%>
+                                                </option>
+                                            </select>
+                                        </label>
+                                    </td>
+                                <tr>
+                                            <%}%>
                                 <tr>
                                     <td class="leftCol-med"><fmt:message
                                             key="rss.manager.instance.type"/>
@@ -89,52 +149,9 @@
                                     </td>
                                     <td><label>
                                         <select name="databaseEngine" id="databaseEngine"
-                                                onchange="setJDBCValues(this,document)">
-                                            <%
-                                                instanceType = RSSManagerHelper.getDatabasePrefix(rssIns.getServerURL().toLowerCase());
-                                                if ("".equals(instanceType)) { %>
-                                            <option value="#" selected="selected">----SELECT----
+                                                onchange="setJDBCValues(this,document)" disabled>
+                                            <option value="<%=rssIns.getDbmsType()%>" selected="selected"><%=rssIns.getDbmsType().toUpperCase()%>
                                             </option>
-                                            <% } else { %>
-                                            <option value="">----SELECT----</option>
-                                            <% }
-                                                if ("mysql".equals(instanceType)) { %>
-                                            <option id="mysql" selected="selected"
-                                                    value="jdbc:mysql://[machine-name/ip]:[port]#com.mysql.jdbc.Driver">
-                                                MySQL
-                                            </option>
-                                            <% } else { %>
-                                            <option id="mysql"
-                                                    value="jdbc:mysql://[machine-name/ip]:[port]#com.mysql.jdbc.Driver">
-                                                MySQL
-                                            </option>
-                                            <% } %>
-                                        </select>
-                                    </label>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="leftCol-med"><fmt:message
-                                            key="rss.manager.server.category"/>
-                                        <font color="red">*</font>
-                                    </td>
-                                    <td><label>
-                                        <select name="serverCategory" id="serverCategory">
-                                            <% if ("".equals(rssIns.getServerCategory())) { %>
-                                            <option selected=selected value="#">----SELECT----</option>
-                                            <%} else { %>
-                                            <option value="#">----SELECT----</option>
-                                            <% }
-                                                if ("RDS".equals(rssIns.getServerCategory())) {%>
-                                            <option selected="selected" value="RDS">RDS</option>
-                                            <% } else {%>
-                                            <option value="RDS">RDS</option>
-                                            <% }
-                                                if ("LOCAL".equals(rssIns.getServerCategory())) { %>
-                                            <option selected="selected" value="LOCAL">LOCAL</option>
-                                            <% } else { %>
-                                            <option value="LOCAL">LOCAL</option>
-                                            <% } %>
                                         </select>
                                     </label>
                                     </td>
@@ -148,10 +165,19 @@
                                                size="60" type="text"></td>
                                 </tr>
                                 <tr>
+                                    <td align="leftCol-med"><fmt:message
+                                            key="rss.manager.datasource.class.name"/><font
+                                            color='red'>*</font></td>
+                                    <td>
+                                        <input id="dataSourceClassName" name="dataSourceClassName" class="longInput"
+                                               value="<%=rssIns.getDriverClass()%>"/>
+                                    </td>
+                                </tr>
+                                <tr>
                                     <td class="leftCol-med"><fmt:message
                                             key="rss.manager.instance.username"/><font
                                             color='red'>*</font></td>
-                                    <td><input value="<%=""%>" id="username"
+                                    <td><input value="<%=rssIns.getUsername()%>" id="username"
                                                name="username"
                                                size="30" type="text"></td>
                                 </tr>
@@ -159,10 +185,57 @@
                                     <td align="left"><fmt:message
                                             key="rss.manager.instance.password"/><font
                                             color='red'>*</font></td>
-                                    <td><input id="password"
+                                    <td><input type="password" id="password"
                                                name="password"
                                                size="30" type="password"
                                                value="<%=""%>"></td>
+                                </tr>
+                                <tr>
+                                    <td align="leftCol-med"><fmt:message
+                                            key="rss.manager.confirm.instance.password"/><font
+                                            color='red'>*</font></td>
+                                    <td>
+                                        <input type="password" id="repassword" type="password" name="repassword" class="longInput"
+                                               value=""/>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="middle-header">
+                            <a onclick="showSnapshotInfo()" class="icon-link"
+                               style="background-image:url(images/plus.gif);"
+                               href="#snapshotInfo" id="snapshotinfoheader"></a>
+                            <fmt:message key="rss.manager.snapshot.related.info"/>
+                        </td>
+                    </tr>
+                    <tr id="snapshotinfo" style="display:none">
+                        <td>
+                            <table class="normal" id="showSnapshotInfo">
+                                <tr>
+                                    <td class="leftCol-med"><fmt:message
+                                            key="rss.manager.ssh.host"/></td>
+                                    <td><input value="<%=sshConfig.getHost()%>" id="sshHost"
+                                               name="sshHost" size="30" type="text"></td>
+                                </tr>
+                                <tr>
+                                    <td class="leftCol-med"><fmt:message
+                                            key="rss.manager.ssh.port"/></td>
+                                    <td><input value="<%=sshConfig.getPort()%>" id="sshPort"
+                                               name="sshPort" size="30" type="text"></td>
+                                </tr>
+                                <tr>
+                                    <td class="leftCol-med"><fmt:message
+                                            key="rss.manager.ssh.username"/></td>
+                                    <td><input value="<%=sshConfig.getUsername()%>" id="sshUsername"
+                                               name="sshUsername" size="30" type="text"></td>
+                                </tr>
+                                <tr>
+                                    <td class="leftCol-med"><fmt:message
+                                            key="rss.manager.snapshot.target.directory"/></td>
+                                    <td><input value="<%=snapshotConfig.getTargetDirectory()%>" id="snapshotTargetDirectory"
+                                               name="snapshotTargetDirectory" size="30" type="text"></td>
                                 </tr>
                             </table>
                         </td>
@@ -177,8 +250,8 @@
                                    onclick="return testConnection(); return false;"/>
 
                             <input class="button" type="button"
-                                   onclick="return validateRSSInstanceProperties('edit'); return false;"
-                                   value="<fmt:message key="rss.manager.save"/>"/>
+                                   value="<fmt:message key="rss.manager.save"/>"
+                                   onclick="if(validateRSSInstanceProperties()) {dispatchRSSInstanceCreateRequest('edit');} return false;"/>
 
                             <input class="button" type="button"
                                    value="<fmt:message key="rss.manager.cancel"/>"

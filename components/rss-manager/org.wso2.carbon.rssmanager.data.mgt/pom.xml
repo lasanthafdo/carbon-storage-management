@@ -14,52 +14,51 @@
  ~ See the License for the specific language governing permissions and
  ~ limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>org.wso2.carbon</groupId>
+        <groupId>org.wso2.carbon.storagemgt</groupId>
         <artifactId>rss-manager</artifactId>
-        <version>4.3.0-SNAPSHOT</version>
-	<relativePath>../pom.xml</relativePath>
+        <version>4.3.4-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.wso2.carbon</groupId>
+    <groupId>org.wso2.carbon.storagemgt</groupId>
     <artifactId>org.wso2.carbon.rssmanager.data.mgt</artifactId>
-    <version>4.3.0-SNAPSHOT</version>
+    <version>4.3.4-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>WSO2 Carbon - RSS Data Management</name>
     <description>WSO2 Carbon - RSS Manager Data Management</description>
     <url>http://wso2.org</url>
-	
-	<build>
-	<resources>
-			<resource>
-				<directory>src/test/resources</directory>
-			</resource>
-	</resources>
 
-	 <plugins>
+    <build>
+        <resources>
+            <resource>
+                <directory>src/test/resources</directory>
+            </resource>
+        </resources>
+
+        <plugins>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-scr-plugin</artifactId>
             </plugin>
-	   
-		<plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>2.1.2</version>
-                    <executions>
-                        <execution>
-                            <id>attach-sources</id>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>jar-no-fork</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.1.2</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
@@ -70,18 +69,17 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Private-Package>org.wso2.carbon.rssmanager.data.mgt.retriever.internal,
-                        				 org.wso2.carbon.rssmanager.data.mgt.publisher.internal
+                            org.wso2.carbon.rssmanager.data.mgt.publisher.internal
                         </Private-Package>
                         <Export-Package>
-                        	!org.wso2.carbon.rssmanager.data.mgt.retriever.internal,
-                        	!org.wso2.carbon.rssmanager.data.mgt.publisher.internal,
-                        	org.wso2.carbon.rssmanager.data.mgt.common.*,
+                            !org.wso2.carbon.rssmanager.data.mgt.retriever.internal,
+                            !org.wso2.carbon.rssmanager.data.mgt.publisher.internal,
+                            org.wso2.carbon.rssmanager.data.mgt.common.*,
                             org.wso2.carbon.rssmanager.data.mgt.publisher.*,
                             org.wso2.carbon.rssmanager.data.mgt.retriever.*
                         </Export-Package>
                         <Import-Package>
-                         	org.apache.commons.logging,
-                            org.wso2.carbon.core.*,
+                            org.apache.commons.logging,
                             org.wso2.carbon.utils.*,
                             org.apache.axis2.*,
                             org.apache.axiom.*,
@@ -93,212 +91,123 @@
                 </configuration>
             </plugin>
 
-	<plugin>
-		<groupId>org.apache.maven.plugins</groupId>
-		<artifactId>maven-surefire-plugin</artifactId>
-		<version>2.14.1</version>
-		<configuration>
-			<skipTests>true</skipTests>
-			<forkCount>1</forkCount>
-			<reuseForks>false</reuseForks>
-			<parallel>classes</parallel>
-			<argLine>-Xmx500m -XX:MaxPermSize=256m</argLine>	
-		</configuration>
-	</plugin>
-            
-        </plugins>
-	</build>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.14.1</version>
+                <configuration>
+                    <skipTests>true</skipTests>
+                    <forkCount>1</forkCount>
+                    <reuseForks>false</reuseForks>
+                    <parallel>classes</parallel>
+                    <argLine>-Xmx500m -XX:MaxPermSize=256m</argLine>
+                </configuration>
+            </plugin>
 
-	<dependencies>
-		<dependency>
-			<groupId>commons-pool</groupId>
-			<artifactId>commons-pool</artifactId>
-			<version>1.6</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-			<version>2.3</version>
-		</dependency>
-            
-         
+        </plugins>
+    </build>
+
+    <dependencies>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.core</artifactId>
-            <version>${carbon.platform.version}</version>
+            <groupId>commons-pool</groupId>
+            <artifactId>commons-pool</artifactId>
+
+        </dependency>
+        <dependency>
+            <groupId>commons-lang.wso2</groupId>
+            <artifactId>commons-lang</artifactId>
+
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.user.api</artifactId>
-            <version>${carbon.platform.version}</version>
+
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.logging</artifactId>
+
         </dependency>
-        
-         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+        <dependency>
+            <groupId>org.wso2.carbon.commons</groupId>
             <artifactId>org.wso2.carbon.databridge.commons</artifactId>
-            <version>${carbon.platform.version}</version>
+
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.commons</groupId>
             <artifactId>org.wso2.carbon.databridge.agent.thrift</artifactId>
-            <version>${carbon.platform.version}</version>
+
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.commons</groupId>
             <artifactId>org.wso2.carbon.ntask.core</artifactId>
-            <version>${carbon.platform.version}</version>
+
         </dependency>
-        
         <dependency>
-		<groupId>org.testng</groupId>
-		<artifactId>testng</artifactId>
-		<version>6.1.1</version>
-		<scope>test</scope>
-	</dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
 
-	<dependency>
-            <groupId>org.jboss.spec.javax.transaction</groupId>
-            <artifactId>jboss-transaction-api_1.1_spec</artifactId>
-            <version>${jboss-transaction-api.version}</version>
+            <scope>test</scope>
         </dependency>
-
-		     <dependency>
+        <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.utils</artifactId>
-            <version>${carbon.platform.version}</version>
-            
+
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.rssmanager.common</artifactId>
-            <version>${carbon.platform.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.storagemgt</groupId>
             <artifactId>org.wso2.carbon.rssmanager.core</artifactId>
-            <version>${carbon.platform.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.ndatasource.core</artifactId>
-            <version>${carbon.platform.version}</version>
+
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.ndatasource.rdbms</artifactId>
-            <version>${carbon.platform.version}</version>
+
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.commons</groupId>
             <artifactId>org.wso2.carbon.transaction.manager</artifactId>
-            <version>${carbon.platform.version}</version>
+
+        </dependency>
+
+        <!-- Secure vault related dependencies -->
+        <dependency>
+            <groupId>org.wso2.carbon</groupId>
+            <artifactId>org.wso2.carbon.securevault</artifactId>
+
+        </dependency>
+
+        <dependency>
+            <groupId>org.wso2.carbon</groupId>
+            <artifactId>org.wso2.carbon.user.core</artifactId>
+
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.commons</groupId>
+            <artifactId>org.wso2.carbon.ntask.common</artifactId>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.coordination.core</artifactId>
-            <version>${carbon.platform.version}</version>
-        </dependency>
-        
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.24</version>
+            <artifactId>org.wso2.carbon.ndatasource.common</artifactId>
         </dependency>
 
-	<dependency>
-		<groupId>postgresql</groupId>
-		<artifactId>postgresql</artifactId>
-		<version>9.1-901.jdbc4</version>
-	</dependency>
-            
-        
-            
-
-	<dependency>
-		<groupId>com.oracle</groupId>
-		<artifactId>ojdbc</artifactId>
-		<version>11.1.0.7.0</version>
-		
-		<scope>system</scope>
-		<systemPath>${basedir}/src/test/resources/artifacts/SS/jar/ojdbc6.jar</systemPath>
-		
-	</dependency>
-        
         <dependency>
-    <groupId>org.jboss.jbossts</groupId>
-    <artifactId>jbossjta</artifactId>
-    <version>4.14.0.Final</version>
-    <exclusions>
-        <exclusion>
-            <groupId>org.jboss.ws.native</groupId>
-            <artifactId>jbossws-native-core</artifactId>
-        </exclusion>
-        <exclusion>
-            <artifactId>emma</artifactId>
-            <groupId>emma</groupId>
-        </exclusion>
-        <exclusion>
-            <artifactId>emma_ant</artifactId>
-            <groupId>emma</groupId>
-        </exclusion>
-        <exclusion>
-            <artifactId>hornetq-core</artifactId>
-            <groupId>org.hornetq</groupId>
-        </exclusion>
-        <exclusion>
-            <artifactId>netty</artifactId>
-            <groupId>org.jboss.netty</groupId>
-        </exclusion>
-        <exclusion>
-            <artifactId>wrapper</artifactId>
-            <groupId>tanukisoft</groupId>
-        </exclusion>
-        <exclusion>
-            <artifactId>jacorb</artifactId>
-            <groupId>jacorb</groupId>
-        </exclusion>
-        <exclusion>
-            <artifactId>jfreechart</artifactId>
-            <groupId>jfree</groupId>
-        </exclusion>
-        <exclusion>
-            <artifactId>jboss-corba-ots-spi</artifactId>
-            <groupId>org.jboss.integration</groupId>
-        </exclusion>
-        <exclusion>
-            <artifactId>jboss-server-manager</artifactId>
-            <groupId>org.jboss.jbossas</groupId>
-        </exclusion>
-        <exclusion>
-            <artifactId>jboss-ejb-api_3.1_spec</artifactId>
-            <groupId>org.jboss.spec.javax.ejb</groupId>
-        </exclusion>
-        <exclusion>
-            <artifactId>jnp-client</artifactId>
-            <groupId>org.jboss.naming</groupId>
-        </exclusion>
-        <exclusion>
-            <artifactId>jboss-servlet-api_3.0_spec</artifactId>
-            <groupId>org.jboss.spec.javax.servlet</groupId>
-        </exclusion>
-        <exclusion>
-            <artifactId>jbossws-common</artifactId>
-            <groupId>org.jboss.ws</groupId>
-        </exclusion>
-        <exclusion>
-            <artifactId>jcl-over-slf4j</artifactId>
-            <groupId>org.slf4j</groupId>
-        </exclusion>
-    </exclusions>
-	</dependency>
-     
-  </dependencies>
+            <groupId>org.eclipse.osgi</groupId>
+            <artifactId>org.eclipse.osgi.services</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.osgi</groupId>
+            <artifactId>org.eclipse.osgi</artifactId>
+        </dependency>
 
-    <properties>
-        <commons-lang.wso2.version>2.6.0.wso2v1</commons-lang.wso2.version>
-    </properties>
+        <dependency>
+            <groupId>org.apache.tomcat.wso2</groupId>
+            <artifactId>jdbc-pool</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ws.commons.axiom.wso2</groupId>
+            <artifactId>axiom</artifactId>
+        </dependency>
+    </dependencies>
+
 </project>

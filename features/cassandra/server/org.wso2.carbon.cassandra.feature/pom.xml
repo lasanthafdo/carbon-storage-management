@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?> 
+<?xml version="1.0" encoding="utf-8"?>
 <!-- 
  ~ Copyright WSO2 Inc. (http://www.wso2.org) All Rights Reserved. 
  ~ 
@@ -15,62 +15,53 @@
  ~ limitations under the License.
 -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <parent>
-        <groupId>org.wso2.carbon</groupId>
+        <groupId>org.wso2.carbon.storagemgt</groupId>
         <artifactId>cassandra-feature</artifactId>
-        <version>4.3.0-SNAPSHOT</version>
-	<relativePath>../../pom.xml</relativePath>
+        <version>4.3.4-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>org.wso2.carbon.cassandra.feature</artifactId>
     <packaging>pom</packaging>
     <name>WSO2 Carbon - Cassandra Feature</name>
-    <version>4.3.0-SNAPSHOT</version>
+    <version>4.3.4-SNAPSHOT</version>
     <url>http://wso2.org</url>
     <description>This feature contains the bundles required for Cassandra Management functionality</description>
 
     <dependencies>
-	<dependency>
-            <groupId>org.wso2.carbon</groupId>
+        <dependency>
+            <groupId>org.wso2.carbon.storagemgt</groupId>
             <artifactId>org.wso2.carbon.cassandra.common.feature</artifactId>
-            <version>4.3.0-SNAPSHOT</version>
-            <type>zip</type>
-	</dependency>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.cassandra.mgt.feature</artifactId>
-            <version>4.3.0-SNAPSHOT</version>
-            <type>zip</type>
-	    </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.cassandra.mgt.ui.feature</artifactId>
-            <version>4.3.0-SNAPSHOT</version>
-            <type>zip</type>
-	    </dependency>
-        <dependency>
-            <groupId>org.wso2.carbon</groupId>
-            <artifactId>org.wso2.carbon.cassandra.server.feature</artifactId>
-            <version>4.3.0-SNAPSHOT</version>
             <type>zip</type>
         </dependency>
         <dependency>
-            <groupId>org.wso2.carbon</groupId>
+            <groupId>org.wso2.carbon.storagemgt</groupId>
+            <artifactId>org.wso2.carbon.cassandra.mgt.feature</artifactId>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.storagemgt</groupId>
+            <artifactId>org.wso2.carbon.cassandra.mgt.ui.feature</artifactId>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.storagemgt</groupId>
+            <artifactId>org.wso2.carbon.cassandra.server.feature</artifactId>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>org.wso2.carbon.storagemgt</groupId>
             <artifactId>org.wso2.carbon.cassandra.dataaccess.feature</artifactId>
-            <version>4.3.0-SNAPSHOT</version>
             <type>zip</type>
         </dependency>
         <dependency>
             <groupId>org.apache.cassandra.wso2</groupId>
             <artifactId>apache-cassandra</artifactId>
-            <version>1.2.10.wso2v1</version>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -88,16 +79,26 @@
                         </goals>
                         <configuration>
                             <id>org.wso2.carbon.cassandra</id>
-                            <propertiesFile>../../../../etc/feature.properties</propertiesFile>
+                            <propertiesFile>../../../etc/feature.properties</propertiesFile>
                             <importFeatures>
-                                <importFeatureDef>org.wso2.carbon.core:4.3.0-SNAPSHOT</importFeatureDef>
+                                <importFeatureDef>org.wso2.carbon.core:${carbon.kernel.version}</importFeatureDef>
                             </importFeatures>
                             <includedFeatures>
-                                <includedFeatureDef>org.wso2.carbon:org.wso2.carbon.cassandra.common.feature:4.3.0-SNAPSHOT</includedFeatureDef>
-                                <includedFeatureDef>org.wso2.carbon:org.wso2.carbon.cassandra.server.feature:4.3.0-SNAPSHOT</includedFeatureDef>
-                                <includedFeatureDef>org.wso2.carbon:org.wso2.carbon.cassandra.dataaccess.feature:4.3.0-SNAPSHOT</includedFeatureDef>
-                                <includedFeatureDef>org.wso2.carbon:org.wso2.carbon.cassandra.mgt.feature:4.3.0-SNAPSHOT</includedFeatureDef>
-                                <includedFeatureDef>org.wso2.carbon:org.wso2.carbon.cassandra.mgt.ui.feature:4.3.0-SNAPSHOT</includedFeatureDef>
+                                <includedFeatureDef>
+                                    org.wso2.carbon.storagemgt:org.wso2.carbon.cassandra.common.feature:${carbon.storage.management.version}
+                                </includedFeatureDef>
+                                <includedFeatureDef>
+                                    org.wso2.carbon.storagemgt:org.wso2.carbon.cassandra.server.feature:${carbon.storage.management.version}
+                                </includedFeatureDef>
+                                <includedFeatureDef>
+                                    org.wso2.carbon.storagemgt:org.wso2.carbon.cassandra.dataaccess.feature:${carbon.storage.management.version}
+                                </includedFeatureDef>
+                                <includedFeatureDef>
+                                    org.wso2.carbon.storagemgt:org.wso2.carbon.cassandra.mgt.feature:${carbon.storage.management.version}
+                                </includedFeatureDef>
+                                <includedFeatureDef>
+                                    org.wso2.carbon.storagemgt:org.wso2.carbon.cassandra.mgt.ui.feature:${carbon.storage.management.version}
+                                </includedFeatureDef>
                             </includedFeatures>
                         </configuration>
                     </execution>
@@ -107,6 +108,6 @@
     </build>
 
     <properties>
-</properties>
+    </properties>
 
 </project>

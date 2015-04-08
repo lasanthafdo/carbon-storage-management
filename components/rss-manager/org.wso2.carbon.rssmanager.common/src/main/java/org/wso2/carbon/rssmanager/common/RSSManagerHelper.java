@@ -18,6 +18,7 @@
  */
 package org.wso2.carbon.rssmanager.common;
 
+import org.wso2.carbon.context.CarbonContext;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -171,15 +172,22 @@ public class RSSManagerHelper {
      * @return JDBC driver as a string.
      */
     public static String getDatabaseDriver(String url) {
+        String driver = "";
         if (url != null) {
             String prefix = url.split(":")[1];
-            if (RSSManagerConstants.MYSQL_PREFIX.equals(prefix)) {
-                return RSSManagerConstants.MYSQL_XA_DRIVER;
-            } else if (RSSManagerConstants.ORACLE_PREFIX.equals(prefix)) {
-                return RSSManagerConstants.ORACLE_DRIVER;
+            if (RSSManagerConstants.MYSQL_PREFIX.equalsIgnoreCase(prefix)) {
+                driver = RSSManagerConstants.MYSQL_DRIVER;
+            } else if (RSSManagerConstants.ORACLE_PREFIX.equalsIgnoreCase(prefix)) {
+                driver = RSSManagerConstants.ORACLE_DRIVER;
+            } else if(RSSManagerConstants.H2_PREFIX.equalsIgnoreCase(prefix)) {
+                driver = RSSManagerConstants.H2_DRIVER;
+            } else if (RSSManagerConstants.SQLSERVER_PREFIX.equalsIgnoreCase(prefix)){
+                driver = RSSManagerConstants.SQLSERVER_DRIVER;
+            } else if (RSSManagerConstants.POSTGRES_PREFIX.equalsIgnoreCase(prefix)) {
+                driver = RSSManagerConstants.POSTGRES_DRIVER;
             }
         }
-        return "";
+        return driver;
     }
 
     public static byte[] intToByteArray(int value) {
@@ -191,6 +199,11 @@ public class RSSManagerHelper {
         return b;
     }
 
+    public static String getDatabaseUserPostfix() {
+        String tenantDomain = CarbonContext.getThreadLocalCarbonContext().getTenantDomain();
+        byte[] bytes = RSSManagerHelper.intToByteArray(tenantDomain.hashCode());
+        return org.apache.commons.codec.binary.Base64.encodeBase64URLSafeString(bytes).replace("_", "$");
+    }
     public static String processDomainName(String domainName) {
         if (domainName == null || "".equals(domainName)) {
             return domainName;
@@ -200,6 +213,9 @@ public class RSSManagerHelper {
     }
 
     public static String constructConnectionUrl(String url) throws Exception {
+        if(RSSManagerConstants.H2.equalsIgnoreCase(getDatabasePrefix(url)) || RSSManagerConstants.POSTGRESQL.equalsIgnoreCase(getDatabasePrefix(url))) {
+            return url;
+        }
         return RSSManagerConstants.JDBC_PREFIX + ":" + RSSManagerHelper.getDatabasePrefix(url) +
                 "://" + RSSManagerHelper.validateRSSInstanceHostname(url);
     }
